@@ -1,0 +1,13 @@
+$font-3x: 3.5em;
+$font-family: Arial;
+
+ion-card-title {
+    font-size: $font-3x;
+    text-align: center;
+    font-family: $font-family;
+}
+
+ion-card-subtitle {
+    font-weight: bold;
+    font-family: $font-family;
+}

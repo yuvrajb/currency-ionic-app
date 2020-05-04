@@ -1,5 +1,7 @@
 {
   "name": "currency-calculator",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
