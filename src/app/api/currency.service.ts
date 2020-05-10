@@ -29,7 +29,8 @@ export class CurrencyService {
         rounding: currency.rounding,
         symbol: currency.symbol,
         symbol_native: currency.symbol_native,
-        selected: false
+        selected: false,
+        show: true
       }
     })
   }

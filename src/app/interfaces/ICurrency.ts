@@ -7,4 +7,5 @@ export interface ICurrency {
     symbol: string;
     symbol_native: string;
     selected: boolean;
+    show: boolean;
 }
