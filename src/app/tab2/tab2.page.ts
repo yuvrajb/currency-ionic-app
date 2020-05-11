@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CurrencyService } from '../api/currency.service';
 import { ICurrency } from '../interfaces/ICurrency';
 import { ToastController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { StorageService } from '../api/storage.service';
 
 @Component({
   selector: 'app-tab2',
@@ -12,30 +14,71 @@ export class Tab2Page {
   // variables
   currencies: ICurrency[];
   searchText: string;
+  storedCurrencies: any = [];
 
   constructor(private currencyService: CurrencyService,
-    public toastController: ToastController) {  }
+    public toastController: ToastController,
+    private storageService: StorageService,
+    private storage: Storage) {  }
 
   ngOnInit() {
     this.currencies = this.currencyService.getCurrencyList();
+
+    this.storageService.getList().then((list) => {
+      if(list != null) {
+        list.forEach((curr) => {
+          this.storedCurrencies.push(curr);
+        })
+      }
+    });
   }
 
   // handles click event on a list item
   handleClickEvent(event: any, currency: ICurrency, index: number) {
     let obj = this.getCurrency(currency);
     obj.selected = !obj.selected;
+
+    // push into storeadCurrencies arr
+    if(obj.selected) {
+      this.storedCurrencies.push(currency);
+    } else {
+      let index = this.storedCurrencies.indexOf(currency.code);
+      if(index != -1) {
+        this.storedCurrencies.splice(index, 1);
+      }
+    }
+
+    // then save the list
+    this.saveList();
   }
 
+  /**
+   * handles click event on the list item
+   * @param event 
+   */
   handleSearchChange(event: any) {
     var searchText = event.target.value;
     this.searchCurrency(searchText);
   }
 
+  /**
+   * saves the list in local storage
+   */
+  private saveList() {
+    this.storageService.saveList(this.storedCurrencies);
+  }
+
+  /**
+   * gets the list of currencies
+   */
   public getCurrencies() {
     let list: ICurrency[] = [];
 
     this.currencies.forEach((currency) => {
       if(currency.show) {
+        if(this.storedCurrencies.indexOf(currency.code) != -1) {
+          currency.selected = true;
+        }
         list.push(currency);
       }
     });
@@ -44,6 +87,8 @@ export class Tab2Page {
       if(a.selected && b.selected) { return 0; }
       if(a.selected) { return -1; }
       else if(b.selected) { return 1; }
+
+      return a.name.localeCompare(b.name);
     });
 
     // show toast if length is 0
@@ -54,7 +99,7 @@ export class Tab2Page {
       //     duration: 2000
       //   });
   
-      //   toast.present();
+      //   await toast.present();
       // }.bind(this));
 
       // fn();
@@ -64,6 +109,10 @@ export class Tab2Page {
     return list;
   }
 
+  /**
+   * searches for the currency based on code / name
+   * @param value 
+   */
   private searchCurrency(value) {
     this.currencies.forEach((curr, index) => {
       if(curr.code.toLowerCase().indexOf(value.toLowerCase()) != -1 || curr.name.toLowerCase().indexOf(value.toLowerCase()) != -1 || curr.selected) {
@@ -74,6 +123,10 @@ export class Tab2Page {
     });
   }
 
+  /**
+   * gets a particular currency object
+   * @param currency 
+   */
   private getCurrency(currency) {
     let currencyObj = null;
 

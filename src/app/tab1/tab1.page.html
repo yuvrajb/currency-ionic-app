@@ -1,8 +1,9 @@
 <ion-content [fullscreen]="true">
-  <ion-card color="tertiary">
+  <ion-progress-bar type="indeterminate" *ngIf="loading"></ion-progress-bar>
+  <ion-card color="tertiary" *ngFor="let currency of currencies; let i = index">
     <ion-card-header>
-      <ion-card-subtitle>USD</ion-card-subtitle>
-      <ion-card-title>75.56</ion-card-title>
+      <ion-card-subtitle>{{ currency.code }} ({{ currency.symbol }}) | {{ currency.name }}</ion-card-subtitle>
+      <ion-card-title>{{ currency.value }}</ion-card-title>
     </ion-card-header>
   </ion-card>
 </ion-content>
