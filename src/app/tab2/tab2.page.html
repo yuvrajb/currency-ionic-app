@@ -1,17 +1,18 @@
-<ion-content [fullscreen]="true">
+<ion-progress-bar type="indeterminate" *ngIf="loading"></ion-progress-bar>
+<ion-content [fullscreen]="true" *ngIf="showCurrencies">
 
-  <ion-searchbar animated placeholder="Search Currencies" animated (ionChange)="handleSearchChange($event)"></ion-searchbar>
+    <ion-searchbar animated placeholder="Search Currencies" animated (ionChange)="handleSearchChange($event)"></ion-searchbar>
 
-  <ion-list>
-    <ion-item *ngFor="let currency of getCurrencies(); let i = index" (click)="handleClickEvent($event, currency, i)">
-      <ion-avatar slot="start" [class.selected]="currency.selected">
-        <b *ngIf="!currency.selected">{{ currency.symbol_native }} </b>
-        <b *ngIf="currency.selected"><ion-icon name="checkmark-outline"></ion-icon></b>
-      </ion-avatar>
-      <ion-label>
-        <h2><b>{{ currency.code }}</b></h2>
-        <h3>{{ currency.name }}</h3>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+    <ion-list>
+        <ion-item *ngFor="let currency of getCurrencies(); let i = index" (click)="handleClickEvent($event, currency, i)">
+            <ion-avatar slot="start" [class.selected]="currency.selected">
+                <b *ngIf="!currency.selected">{{ currency.symbol_native }} </b>
+                <b *ngIf="currency.selected"><ion-icon name="checkmark-outline"></ion-icon></b>
+            </ion-avatar>
+            <ion-label>
+                <h2><b>{{ currency.code }}</b></h2>
+                <h3>{{ currency.name }}</h3>
+            </ion-label>
+        </ion-item>
+    </ion-list>
 </ion-content>

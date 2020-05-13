@@ -25,6 +25,7 @@ export class Tab1Page {
       }
     });
     this.storageService.storageObj.subscribe((list) => {
+      console.log(list);
       if(list != null) {
         this.renderList(list);
       }
@@ -32,12 +33,12 @@ export class Tab1Page {
   }
 
   private renderList(list) {  
-    this.currencies = [];
-
     let latestRates = this.currencyService.getLatestRates(list);
     let values = {};
-    latestRates.then((resp) => {
+    latestRates.then((resp) => {      
       resp.subscribe((rates :IRate[]) => {
+        this.currencies = [];
+
         rates.forEach((rate: IRate) => {
           values[rate.code] = rate.value;
         });
@@ -45,6 +46,11 @@ export class Tab1Page {
         list.forEach((curr) => {
           curr.value = values[curr.code];
           this.currencies.push(curr);
+        });
+        
+        // sort the collection
+        this.currencies.sort((a,b) => {    
+          return a.name.localeCompare(b.name);
         });
 
         // disable loader

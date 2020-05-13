@@ -15,6 +15,8 @@ export class Tab2Page {
   currencies: ICurrency[];
   searchText: string;
   storedCurrencies: any = [];
+  loading: boolean = true;
+  showCurrencies: boolean = false;
 
   constructor(private currencyService: CurrencyService,
     public toastController: ToastController,
@@ -27,9 +29,12 @@ export class Tab2Page {
     this.storageService.getList().then((list) => {
       if(list != null) {
         list.forEach((curr) => {
-          this.storedCurrencies.push(curr);
-        })
-      }
+          this.storedCurrencies.push(curr);          
+        });
+      }      
+
+      this.showCurrencies = true;
+      this.loading = false;
     });
   }
 
@@ -42,7 +47,11 @@ export class Tab2Page {
     if(obj.selected) {
       this.storedCurrencies.push(currency);
     } else {
-      let index = this.storedCurrencies.indexOf(currency.code);
+      let index = this.storedCurrencies.findIndex((curr) => {
+        if(curr.code == currency.code) {
+          return true;
+        }
+      });
       if(index != -1) {
         this.storedCurrencies.splice(index, 1);
       }
@@ -76,15 +85,19 @@ export class Tab2Page {
 
     this.currencies.forEach((currency) => {
       if(currency.show) {
-        if(this.storedCurrencies.indexOf(currency.code) != -1) {
-          currency.selected = true;
+        if(this.storedCurrencies.find((curr, index) => {
+          if(curr.code == currency.code) {
+            return true;
+          }
+        })) {
+          currency.selected = true;          
         }
         list.push(currency);
-      }
+      }      
     });
 
     list.sort((a,b) => {
-      if(a.selected && b.selected) { return 0; }
+      if(a.selected && b.selected) { return a.name.localeCompare(b.name); }
       if(a.selected) { return -1; }
       else if(b.selected) { return 1; }
 
@@ -93,16 +106,6 @@ export class Tab2Page {
 
     // show toast if length is 0
     if(list.length == 0) {
-      // let fn = (async function() {
-      //   const toast = await this.toastController.create({
-      //     message: 'No Currencies Found.',
-      //     duration: 2000
-      //   });
-  
-      //   await toast.present();
-      // }.bind(this));
-
-      // fn();
       console.log("not found");
     }
 

@@ -19,9 +19,9 @@ export class StorageService {
    * @param currencies 
    */
   public saveList(currencies) {
-    this.storage.set('storedCurrencies', currencies);
-
-    this.storageSubject.next(currencies);
+    this.storage.set('storedCurrencies', currencies).then((data) => {
+      this.storageSubject.next(currencies);
+    });    
   }
 
   /**
