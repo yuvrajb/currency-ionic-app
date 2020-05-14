@@ -49,11 +49,13 @@ export class CurrencyService {
     let baseCurrency = null;
 
     return this.storageService.getBaseCurrency().then((curr) => {
+      console.log(curr);
       if(curr == null) {
         baseCurrency = "INR";
       } else {
-        baseCurrency = curr.code;
+        baseCurrency = curr;
       }
+      console.log(baseCurrency);
 
       let baseExists = false;
       list.forEach((curr) => {
@@ -91,7 +93,7 @@ export class CurrencyService {
           }
 
           latestRates.forEach((rate: IRate) => {
-            rate.value = parseFloat((baseRate / rate.value).toFixed(2));
+            rate.value = parseFloat((baseRate / rate.value).toFixed(3));
           });
 
           return latestRates;

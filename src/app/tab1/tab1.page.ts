@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { StorageService } from '../api/storage.service';
 import { ICurrency } from '../interfaces/ICurrency';
 import { IRate } from '../interfaces/irate';
+import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 
 @Component({
   selector: 'app-tab1',
@@ -25,14 +26,25 @@ export class Tab1Page {
       }
     });
     this.storageService.storageObj.subscribe((list) => {
-      console.log(list);
       if(list != null) {
         this.renderList(list);
       }
     });
+    this.storageService.baseCurrency.subscribe((base) => {
+      console.log(base);
+      if(base != null) {
+        this.renderList(this.currencies);
+      }
+    });
   }
 
+  /**
+   * shows the tiles on the screen each for selected currency
+   * @param list 
+   */
   private renderList(list) {  
+    this.loading = true;
+
     let latestRates = this.currencyService.getLatestRates(list);
     let values = {};
     latestRates.then((resp) => {      

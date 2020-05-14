@@ -32,9 +32,9 @@ export class StorageService {
   }
 
   public saveBaseCurrency(currency) {
-    this.storage.set('baseCurrency', currency);
-
-    this.baseCurrencySubject.next(currency);
+    this.storage.set('baseCurrency', currency).then((data) => {
+      this.baseCurrencySubject.next(currency);
+    });
   }
 
   public getBaseCurrency() {
