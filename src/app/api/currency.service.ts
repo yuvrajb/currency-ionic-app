@@ -58,7 +58,7 @@ export class CurrencyService {
         baseCurrency = curr;
       }
       
-      if(decimalPlaces == null) {
+      if(decimalPlaces == null || decimalPlaces == -1) {
         decimalPlaces = 2;
       }
 

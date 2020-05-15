@@ -39,7 +39,7 @@ export class StorageService {
    * @param currency 
    */
   public setBaseCurrency(currency) {
-    this.storage.set('baseCurrency', currency).then((data) => {
+    return this.storage.set('baseCurrency', currency).then((data) => {
       this.baseCurrencySubject.next(currency);
     });
   }
@@ -63,7 +63,7 @@ export class StorageService {
    * @param decimal 
    */
   public setDecimalPlaces(decimal) {
-    this.storage.set('decimalPlaces', decimal).then((data) => {
+    return this.storage.set('decimalPlaces', decimal).then((data) => {
       this.decimalPlacesSubject.next(data);
     });
   }

@@ -13,6 +13,7 @@ export class Tab3Page {
   currencies: ICurrency[];
   baseCurrency: string;
   decimalPlace: string;
+  loading: boolean = true;
 
   constructor(private currencyService: CurrencyService,
     private storageService: StorageService) {}
@@ -46,7 +47,10 @@ export class Tab3Page {
   handleBaseCurrencyChange(event) {
     let curr_code = event.detail.value;
 
-    this.storageService.setBaseCurrency(curr_code);
+    this.loading = true;
+    this.storageService.setBaseCurrency(curr_code).then((dt) => {
+      this.loading = false;
+    });
   }
 
   /**
@@ -56,6 +60,9 @@ export class Tab3Page {
   handeDecimalPlaceChange(event) {
     let curr_decimal_place = event.detail.value;
 
-    this.storageService.setDecimalPlaces(curr_decimal_place);
+    this.loading = true;
+    this.storageService.setDecimalPlaces(curr_decimal_place).then((dt) => {
+      this.loading = false;
+    });
   }
 }

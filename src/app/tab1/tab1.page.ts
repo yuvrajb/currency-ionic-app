@@ -39,7 +39,8 @@ export class Tab1Page {
     });
     this.storageService.decimalPlaces.subscribe((decimal) => {
       if(decimal != null) {
-        this.renderList(this.currencies, decimal);
+        const currenciesList = JSON.parse(JSON.stringify(this.currencies));
+        this.renderList(currenciesList, decimal);
         console.log(decimal);
       }
     })
@@ -71,6 +72,8 @@ export class Tab1Page {
         this.currencies.sort((a,b) => {    
           return a.name.localeCompare(b.name);
         });
+
+        console.log(this.currencies);
 
         // disable loader
         this.loading = false;
