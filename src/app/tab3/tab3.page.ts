@@ -12,6 +12,7 @@ export class Tab3Page {
   // variables
   currencies: ICurrency[];
   baseCurrency: string;
+  decimalPlace: string;
 
   constructor(private currencyService: CurrencyService,
     private storageService: StorageService) {}
@@ -24,13 +25,37 @@ export class Tab3Page {
     });
 
     this.storageService.getBaseCurrency().then((code) => {
+      if(code == null) {
+        code = "INR"; // by default INR
+      }
       this.baseCurrency = code;
-    })
+    });
+
+    this.storageService.getDecimalPlaces().then((decimal) => {
+      if(decimal == null) {
+        decimal = "2";
+      } 
+      this.decimalPlace = decimal;
+    });
   }
 
+  /**
+   * handles change event for base currency
+   * @param event 
+   */
   handleBaseCurrencyChange(event) {
     let curr_code = event.detail.value;
 
-    this.storageService.saveBaseCurrency(curr_code);
+    this.storageService.setBaseCurrency(curr_code);
+  }
+
+  /**
+   * handles change event for decimal change
+   * @param event 
+   */
+  handeDecimalPlaceChange(event) {
+    let curr_decimal_place = event.detail.value;
+
+    this.storageService.setDecimalPlaces(curr_decimal_place);
   }
 }

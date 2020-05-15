@@ -22,7 +22,9 @@ export class Tab1Page {
   ngOnInit() {
     this.storageService.getList().then((list) => {
       if(list != null) {
-        this.renderList(list);
+        this.storageService.getDecimalPlaces().then((decimal) => {
+          this.renderList(list, decimal);
+        });
       }
     });
     this.storageService.storageObj.subscribe((list) => {
@@ -30,22 +32,27 @@ export class Tab1Page {
         this.renderList(list);
       }
     });
-    this.storageService.baseCurrency.subscribe((base) => {
-      console.log(base);
+    this.storageService.baseCurrency.subscribe((base) => {      
       if(base != null) {
         this.renderList(this.currencies);
       }
     });
+    this.storageService.decimalPlaces.subscribe((decimal) => {
+      if(decimal != null) {
+        this.renderList(this.currencies, decimal);
+        console.log(decimal);
+      }
+    })
   }
 
   /**
    * shows the tiles on the screen each for selected currency
    * @param list 
    */
-  private renderList(list) {  
+  private renderList(list, decimal = 2) {  
     this.loading = true;
 
-    let latestRates = this.currencyService.getLatestRates(list);
+    let latestRates = this.currencyService.getLatestRates(list, decimal);
     let values = {};
     latestRates.then((resp) => {      
       resp.subscribe((rates :IRate[]) => {

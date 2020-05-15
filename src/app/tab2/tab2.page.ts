@@ -74,7 +74,7 @@ export class Tab2Page {
    * saves the list in local storage
    */
   private saveList() {
-    this.storageService.saveList(this.storedCurrencies);
+    this.storageService.setList(this.storedCurrencies);
   }
 
   /**

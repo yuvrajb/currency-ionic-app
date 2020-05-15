@@ -15,9 +15,12 @@ export class CurrencyService {
   // variables
   baseUrl = environment.baseUrl;
   apiKey = environment.apiKey;
+  decimalPlaces : number = null;
 
   constructor(private storageService: StorageService,
-    private http: HttpClient) { }
+    private http: HttpClient) {
+      
+  }
 
   public getCurrencyList() {
     var temp = [];
@@ -44,18 +47,20 @@ export class CurrencyService {
    * hits the API endpoint to get the latest currencies
    * @param list 
    */
-  public getLatestRates(list) {
+  public getLatestRates(list, decimalPlaces: number = 2) {
     let currList = "";
     let baseCurrency = null;
 
-    return this.storageService.getBaseCurrency().then((curr) => {
-      console.log(curr);
+    return this.storageService.getBaseCurrency().then((curr) => {       
       if(curr == null) {
         baseCurrency = "INR";
       } else {
         baseCurrency = curr;
       }
-      console.log(baseCurrency);
+      
+      if(decimalPlaces == null) {
+        decimalPlaces = 2;
+      }
 
       let baseExists = false;
       list.forEach((curr) => {
@@ -93,7 +98,7 @@ export class CurrencyService {
           }
 
           latestRates.forEach((rate: IRate) => {
-            rate.value = parseFloat((baseRate / rate.value).toFixed(3));
+            rate.value = parseFloat((baseRate / rate.value).toFixed(decimalPlaces));
           });
 
           return latestRates;
@@ -101,6 +106,6 @@ export class CurrencyService {
           
         }
       }));
-    });   
+    }); 
   }
 }

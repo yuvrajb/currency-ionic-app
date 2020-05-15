@@ -1,12 +1,22 @@
 <ion-content [fullscreen]="true">
-  <ion-toolbar>
-    <ion-title>Settings</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Settings</ion-title>
+    </ion-toolbar>
 
-  <ion-item>
-    <ion-label>Base Currency</ion-label>
-    <ion-select value="notifications" interface="action-sheet" (ionChange)="handleBaseCurrencyChange($event)" [value]="baseCurrency">
-      <ion-select-option *ngFor="let currency of currencies; let i = index" value="{{ currency.code }}">{{ currency.name }}</ion-select-option>
-    </ion-select>
-  </ion-item>
+    <ion-item>
+        <ion-label>Base Currency</ion-label>
+        <ion-select value="notifications" interface="action-sheet" (ionChange)="handleBaseCurrencyChange($event)" [value]="baseCurrency">
+            <ion-select-option *ngFor="let currency of currencies; let i = index" value="{{ currency.code }}">{{ currency.name }}</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Decimal Places</ion-label>
+        <ion-select value="notifications" interface="action-sheet" (ionChange)="handeDecimalPlaceChange($event)" [value]="decimalPlace">
+            <ion-select-option value="-1">None</ion-select-option>
+            <ion-select-option value="1">1</ion-select-option>
+            <ion-select-option value="2">2</ion-select-option>
+            <ion-select-option value="3">3</ion-select-option>
+        </ion-select>
+    </ion-item>
 </ion-content>

@@ -12,13 +12,16 @@ export class StorageService {
   private baseCurrencySubject = new BehaviorSubject(null);
   public baseCurrency = this.baseCurrencySubject.asObservable();
 
+  private decimalPlacesSubject = new BehaviorSubject(null);
+  public decimalPlaces = this.decimalPlacesSubject.asObservable();
+
   constructor(private storage: Storage) { }
 
   /**
    * saves the list in storage
    * @param currencies 
    */
-  public saveList(currencies) {
+  public setList(currencies) {
     this.storage.set('storedCurrencies', currencies).then((data) => {
       this.storageSubject.next(currencies);
     });    
@@ -31,13 +34,37 @@ export class StorageService {
     return this.storage.get('storedCurrencies');
   }
 
-  public saveBaseCurrency(currency) {
+  /**
+   * saves the base currency
+   * @param currency 
+   */
+  public setBaseCurrency(currency) {
     this.storage.set('baseCurrency', currency).then((data) => {
       this.baseCurrencySubject.next(currency);
     });
   }
 
+  /**
+   * gets the base currency
+   */
   public getBaseCurrency() {
     return this.storage.get('baseCurrency');
+  }
+
+  /**
+   * gets the decimal places saved
+   */
+  public getDecimalPlaces() {
+    return this.storage.get('decimalPlaces');
+  }
+
+  /**
+   * saves the decimal places
+   * @param decimal 
+   */
+  public setDecimalPlaces(decimal) {
+    this.storage.set('decimalPlaces', decimal).then((data) => {
+      this.decimalPlacesSubject.next(data);
+    });
   }
 }
