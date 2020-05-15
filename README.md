@@ -8,3 +8,6 @@ Ionic App to view current Currency Rates | Self Practice | Angular
 4. View Timeline of a Currency.
 5. Icon for each Selected Currency to show increase / descrease in value.
 6. Ability to Modify Decimal Points. (Done)
+7. *Local Storage of API results to prevent unecessary hits to endpoint every other minute. (Fresh requests will only be made when the local data is stale (1 hour old))* **[HIGH IMPORTANCE]**
+
+On a side note, I think I got basic idea for another app - Simple Task Tracker. This will help me in practising Angular + Ionic more!!
