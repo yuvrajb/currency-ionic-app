@@ -53,9 +53,12 @@ export class Tab1Page {
   private renderList(list, decimal = 2) {  
     this.loading = true;
 
+    console.log(list);
+
     let latestRates = this.currencyService.getLatestRates(list, decimal);
     let values = {};
-    latestRates.then((resp) => {      
+    latestRates.then().then((resp) => {      
+      console.log(resp);
       resp.subscribe((rates :IRate[]) => {
         this.currencies = [];
 

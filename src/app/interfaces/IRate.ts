@@ -1,4 +1,6 @@
 export interface IRate {
     code: string,
-    value: number
+    value: number,
+    timestamp: Date,
+    historicalValue: number
 }
