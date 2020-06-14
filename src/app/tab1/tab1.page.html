@@ -1,9 +1,10 @@
 <ion-content [fullscreen]="true">
   <ion-progress-bar type="indeterminate" *ngIf="loading"></ion-progress-bar>
-  <ion-card color="tertiary" *ngFor="let currency of currencies; let i = index" [style.background-position]="currency.position">
+  <ion-card color="tertiary" *ngFor="let currency of currencies; let i = index" [style.background-position]="currency.position" (click)="handleTileTap($event, i)">
+    <ion-badge color="tertiary" *ngIf="currency.multiplier != 1">{{ currency.multiplier }}</ion-badge>
     <ion-card-header>
       <ion-card-subtitle>{{ currency.code }} ({{ currency.symbol }}) | {{ currency.name }}</ion-card-subtitle>
-      <ion-card-title>{{ currency.value }}</ion-card-title>
+      <ion-card-title>{{ currency.total_value }}</ion-card-title>
     </ion-card-header>
   </ion-card>
 </ion-content>

@@ -8,4 +8,7 @@ export interface ICurrency {
     symbol_native: string;
     selected: boolean;
     show: boolean;
+    base_value: number;
+    multiplier: number;
+    total_value: number;
 }
