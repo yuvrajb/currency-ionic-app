@@ -110,6 +110,11 @@ export class CurrencyService {
 
         // hit fixer only if there's any currency value to be fetched
         if(newCurrList.length > 0) {
+          // check whether base currency is there or not
+          var baseNotExists = newCurrList.indexOf(baseCurrency) == -1;
+          if(baseNotExists) {
+            newCurrList.push(baseCurrency);
+          }
           currList = newCurrList.join(",");
           params["symbols"] = currList;
 

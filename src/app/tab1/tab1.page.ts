@@ -53,13 +53,11 @@ export class Tab1Page {
   private renderList(list, decimal = 2) {  
     this.loading = true;
 
-    console.log(list);
-
     let latestRates = this.currencyService.getLatestRates(list, decimal);
     let values = {};
     latestRates.then().then((resp) => {      
-      console.log(resp);
       resp.subscribe((rates :IRate[]) => {
+        console.log(rates);
         this.currencies = [];
 
         rates.forEach((rate: IRate) => {
@@ -68,6 +66,7 @@ export class Tab1Page {
 
         list.forEach((curr) => {
           curr.value = values[curr.code];
+          curr.position = this.backgroundPosition();
           this.currencies.push(curr);
         });
         
@@ -76,11 +75,13 @@ export class Tab1Page {
           return a.name.localeCompare(b.name);
         });
 
-        console.log(this.currencies);
-
         // disable loader
         this.loading = false;
       })
     });
+  }
+
+  public backgroundPosition() {
+    return ((Math.random() * 31) + 70) + "%";
   }
 }

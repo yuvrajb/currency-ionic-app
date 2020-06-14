@@ -112,6 +112,12 @@ export class StorageService {
       for(var key in db[baseCurrency]) {
         if(key == "" + dateKey) {
           dateArray = db[baseCurrency][key];
+        } else {
+          var diff = dateKey - parseInt(key);
+          console.log(diff);
+          if(diff > 86400000) { // difference is more than a day
+            delete db[baseCurrency][key];
+          }
         }
       }
 
@@ -184,17 +190,24 @@ export class StorageService {
           var currencies = baseCurrencyObj[time];
 
           // parse through each and try to find rates
-          currencies.forEach((curr) => {
-            var lastChecked = curr.lastChecked;
-            var now = (new Date()).getTime();
-
-            // data will be stale if it's more than an hour ago
-            if(toBeFetched.indexOf(curr.code) != -1 && now - lastChecked <= 3600000) {
-              var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date(), historicalValue: null};
-              latestRates.push(currObj);
+          currencies.forEach((curr, index) => {
+            if(curr != null) {
+              var lastChecked = curr.lastChecked;
+              var now = (new Date()).getTime();
+  
+              // data will be stale if it's more than an hour ago
+              if(toBeFetched.indexOf(curr.code) != -1 && now - lastChecked <= 3600000) {
+                var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date(), historicalValue: null};
+                latestRates.push(currObj);
+              } else {
+                currencies[index] = null;
+              }
             }
           })
-        }        
+        }     
+        
+        // save the updated db
+        this.storage.set('database', db);
       }
 
       // finally send the list of currency rates fetched from storage
