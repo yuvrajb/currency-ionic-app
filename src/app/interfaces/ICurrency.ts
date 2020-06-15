@@ -11,4 +11,5 @@ export interface ICurrency {
     base_value: number;
     multiplier: number;
     total_value: number;
+    total_value_str: string;
 }

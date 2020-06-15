@@ -4,7 +4,13 @@
     <ion-badge color="tertiary" *ngIf="currency.multiplier != 1">{{ currency.multiplier }}</ion-badge>
     <ion-card-header>
       <ion-card-subtitle>{{ currency.code }} ({{ currency.symbol }}) | {{ currency.name }}</ion-card-subtitle>
-      <ion-card-title>{{ currency.total_value }}</ion-card-title>
+      <ion-card-title>{{ currency.total_value_str }}</ion-card-title>
     </ion-card-header>
   </ion-card>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="showBin" (click)="clearValues()">
+  <ion-fab-button class="ion-color ion-color-danger">
+    <ion-icon name="trash-bin-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

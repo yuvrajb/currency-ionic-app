@@ -7,6 +7,8 @@ import { IRate } from '../interfaces/irate';
 import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 import { AlertController } from '@ionic/angular';
 
+import * as numeral from 'numeral';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -16,6 +18,7 @@ export class Tab1Page {
   currencies: ICurrency[] = [];
   loading: Boolean = true;
   decimal: number;
+  showBin: Boolean = false;
 
   constructor(private currencyService: CurrencyService,
     private storageService: StorageService,
@@ -72,6 +75,7 @@ export class Tab1Page {
           curr.base_value = values[curr.code];
           curr.multiplier = 1;
           curr.total_value = curr.base_value * curr.multiplier;
+          curr.total_value_str = this.formatNumber(curr.total_value, decimal);
           curr.position = this.backgroundPosition();
           this.currencies.push(curr);
         });
@@ -109,15 +113,29 @@ export class Tab1Page {
         {
           name: 'value',
           type: 'number',
-          placeholder: 'Enter Amount'
-        },
-        {
-          name: 'all',
-          type: 'checkbox',
-          label: 'Calculate All?'
+          placeholder: 'Enter Amount',
+          value: multiplier == 1 ? null : multiplier
         }
       ],
       buttons: [
+        {
+          text: 'Apply All',
+          cssClass: 'secondary',
+          handler: data => {
+            var amount = data.value;
+            if(amount == 0) {
+              amount = 1;
+            }
+
+            this.currencies.forEach((curr) => {
+              curr.multiplier = parseFloat(amount);            
+              curr.total_value = parseFloat((curr.base_value * curr.multiplier).toFixed(this.decimal));
+              curr.total_value_str = this.formatNumber(curr.total_value, this.decimal);
+            });
+
+            this.determineBinButtonShow();
+          }
+        },
         {
           text: 'OK',
           handler: data => {
@@ -128,11 +146,61 @@ export class Tab1Page {
 
             curr.multiplier = parseFloat(amount);            
             curr.total_value = parseFloat((curr.base_value * curr.multiplier).toFixed(this.decimal));
+            curr.total_value_str = this.formatNumber(curr.total_value, this.decimal);
+
+            this.determineBinButtonShow();
           }
         }
       ]
     });
 
-    await prompt.present();
+    await prompt.present().then(() => {
+      const firstInput : any= document.querySelector('ion-alert input');
+      firstInput.focus();
+      return
+    });
+  }
+
+  /**
+   * format the number using numeral
+   * @param num 
+   * @param decimal 
+   */
+  public formatNumber(num, decimal) {
+    if(decimal == 2) {
+      return numeral(num).format('0,0.00');
+    } else if(decimal == 3) {
+      return numeral(num).format('0,0.000');
+    }
+
+    return numeral(num).format('0,0');
+  }
+
+  /**
+   * this function determins whether to show bin button
+   */
+  public determineBinButtonShow() {
+    var show = false;
+
+    this.currencies.forEach((curr) => {
+      if(curr.multiplier != 1) {
+        show = true;
+      }
+    });
+
+    this.showBin = show;
+  }
+
+  /**
+   * this function will clear all values provided for calculations
+   */
+  public clearValues() {
+    this.currencies.forEach((curr) => {
+      curr.multiplier = 1;
+      curr.total_value = curr.base_value;
+      curr.total_value_str = this.formatNumber(curr.total_value, this.decimal);
+    });
+
+    this.showBin = false;
   }
 }
