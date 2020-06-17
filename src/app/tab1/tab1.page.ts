@@ -8,6 +8,7 @@ import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 import { AlertController } from '@ionic/angular';
 
 import * as numeral from 'numeral';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab1',
@@ -19,15 +20,24 @@ export class Tab1Page {
   loading: Boolean = true;
   decimal: number;
   showBin: Boolean = false;
+  showNoCurrencyMessage: Boolean = true;
 
   constructor(private currencyService: CurrencyService,
     private storageService: StorageService,
-    public alertController: AlertController) {
+    public alertController: AlertController,
+    private router: Router) {
   }
 
-  ngOnInit() {
+  /**
+   * makes sure that no currency message is always in the center
+   * */
+  ngAfterContentChecked() {
+    this.adjustNoCurrencyPosition();
+  }
+
+  ngOnInit() {    
     this.storageService.getList().then((list) => {
-      if(list != null) {
+      if(list != null || list.length != 0) {
         this.storageService.getDecimalPlaces().then((decimal) => {
           this.renderList(list, decimal);
         });
@@ -49,7 +59,21 @@ export class Tab1Page {
         this.renderList(currenciesList, decimal);
         console.log(decimal);
       }
-    })
+    });
+
+    this.adjustNoCurrencyPosition();
+  }
+
+  /**
+   * responsible to show no currency element in the center of the sceen
+   */
+  adjustNoCurrencyPosition() {
+    var obj = document.getElementById("no-currency");
+    if(obj != null) {
+      var marginTop = ((window.innerHeight - 57) / 2 - 100)
+      obj.style.marginTop = marginTop + "px";
+      obj.style.display = "block";
+    }
   }
 
   /**
@@ -59,6 +83,15 @@ export class Tab1Page {
   private renderList(list, decimal = 2) {  
     this.loading = true;
     this.decimal = decimal;
+
+    // set whether to show no currency message or not
+    if(list.length != 0) {
+      this.showNoCurrencyMessage = false;
+    } else {
+      this.showNoCurrencyMessage = true;
+      console.log(document.getElementById("no-currency"));
+      setTimeout(() => this.adjustNoCurrencyPosition(), 200);
+    }
 
     let latestRates = this.currencyService.getLatestRates(list, decimal);
     let values = {};
@@ -202,5 +235,12 @@ export class Tab1Page {
     });
 
     this.showBin = false;
+  }
+
+  /**
+   * navigates to second tab
+   */
+  public navigateToCurrencies() {
+    this.router.navigate(['/tabs/tab2']);
   }
 }
