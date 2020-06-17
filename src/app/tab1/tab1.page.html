@@ -1,8 +1,28 @@
 <ion-content [fullscreen]="true">
-  <ion-card color="tertiary">
+  <ion-progress-bar type="indeterminate" *ngIf="loading"></ion-progress-bar>
+  <ion-card color="tertiary" *ngFor="let currency of currencies; let i = index" [style.background-position]="currency.position" (click)="handleTileTap($event, i)">
+    <ion-badge color="tertiary" *ngIf="currency.multiplier != 1">{{ currency.multiplier }}</ion-badge>
     <ion-card-header>
-      <ion-card-subtitle>USD</ion-card-subtitle>
-      <ion-card-title>75.56</ion-card-title>
+      <ion-card-subtitle>{{ currency.code }} ({{ currency.symbol }}) | {{ currency.name }}</ion-card-subtitle>
+      <ion-card-title>{{ currency.total_value_str }}</ion-card-title>
     </ion-card-header>
   </ion-card>
+
+  <ion-card id="no-currency" *ngIf="showNoCurrencyMessage">
+    <img src="/assets/poor.png" width="128"/>
+    <ion-card-content>
+      <ion-button color="dark" expand="block" (click)="navigateToCurrencies()">
+        <ion-icon slot="start" name="add-outline"></ion-icon>
+        <b>
+          Add Currency
+        </b>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="showBin" (click)="clearValues()">
+  <ion-fab-button class="ion-color ion-color-danger">
+    <ion-icon name="trash-bin-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
