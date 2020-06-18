@@ -8,8 +8,8 @@ Ionic App to view current Currency Rates | Self Practice | Angular
 # Features
 1. Ability to Select Multiple Currencies.
 2. View Current Exchange Rates of the Selected Currencies.
-3. Ability to calculate amount based on user input.
-4. Ability to Select Base Currency
+3. Ability to Calculate Amount based on User Input.
+4. Ability to Select Base Currency.
 5. Ability to Modify Decimal Points.
 
 # Upcoming Features
