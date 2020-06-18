@@ -1,14 +1,23 @@
 # currency-ionic-app
 Ionic App to view current Currency Rates | Self Practice | Angular
 
-# Features
-1. Ability to Select Multiple Currencies. (Done)
-2. View Current Exchange Rates of the Selected Currencies. (Done)
-3. Ability to Select Base Currency. (Done)
-4. View Timeline of a Currency.
-5. Icon for each Selected Currency to show increase / descrease in value.
-6. Ability to Modify Decimal Points. (Done)
-7. *Local Storage of API results to prevent unecessary hits to endpoint every other minute. (Fresh requests will only be made when the local data is stale (1 hour old))* **[HIGH IMPORTANCE]** (Done)
-8. Ability to calculate amount based on user input (Done)
+# Screenshots
+<img src="https://user-images.githubusercontent.com/5852319/85065081-3772c500-b1ca-11ea-980a-4182f517305a.jpg" width="270"> <img src="https://user-images.githubusercontent.com/5852319/85065085-393c8880-b1ca-11ea-8a11-a7d21c3fc4f7.jpg" width="270"> <img src="https://user-images.githubusercontent.com/5852319/85065086-393c8880-b1ca-11ea-84a3-2cf645548649.jpg" width="270"> <img src="https://user-images.githubusercontent.com/5852319/85065091-39d51f00-b1ca-11ea-81d7-31654ac20cde.jpg" width="270"> 
 
-On a side note, I think I got basic idea for another app - Simple Task Tracker. This will help me in practising Angular + Ionic more!!
+
+# Features
+1. Ability to Select Multiple Currencies.
+2. View Current Exchange Rates of the Selected Currencies.
+3. Ability to calculate amount based on user input.
+4. Ability to Select Base Currency
+5. Ability to Modify Decimal Points.
+
+# Upcoming Features
+1. Inc/Dec icon based on previous day.
+
+# Sidenote
+This is a self learning project. Comments / Suggestion welcomed.<br>
+Need to contact me? Send me an [email](mailto:yuvrajbabrah@live.com?subject=[GitHub]%20Currency%20Iconic%20App)
+
+# Credits
+Icons used in the application made by [smallikeart](https://www.flaticon.com/authors/smalllikeart) from [http://www.flaticon.com/](http://www.flaticon.com/)
