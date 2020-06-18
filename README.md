@@ -1,4 +1,4 @@
-# currency-ionic-app
+# Currency App - Android
 Ionic App to view current Currency Rates | Self Practice | Angular
 
 # Screenshots
