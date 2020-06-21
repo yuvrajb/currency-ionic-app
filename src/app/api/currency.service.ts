@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { IRate } from '../interfaces/irate';
 import { map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class CurrencyService {
   baseUrl = environment.baseUrl;
   apiKey = environment.apiKey;
   decimalPlaces : number = null;
+  baseCurrency: string = null;
 
   constructor(private storageService: StorageService,
     private http: HttpClient) {
@@ -58,11 +60,17 @@ export class CurrencyService {
       } else {
         baseCurrency = curr;
       }
+
+      // save in calss
+      this.baseCurrency = baseCurrency;
       
       // default decimal places will be 2
       if(decimalPlaces == null || decimalPlaces == -1) {
         decimalPlaces = 2;
       }
+
+      // save in class
+      this.decimalPlaces = decimalPlaces;
 
       // check whether base currency exists in the list of currencies for which rates need to be fetched
       let baseExists = false;
@@ -127,12 +135,12 @@ export class CurrencyService {
               let baseRate = null;
               let localCurrencies = [];
               for(var code in rates) {
-                latestRates.push({code: code, value: rates[code], timestamp: new Date(), historicalValue: null});
+                latestRates.push({code: code, value: rates[code], timestamp: new Date()});
                 if(code == baseCurrency) {
                   baseRate = rates[code];
                 }
     
-                let obj = {code: code, value: rates[code], historicalValue: null};
+                let obj = {code: code, value: rates[code]};
                 localCurrencies.push(obj);
               }
     
@@ -164,5 +172,121 @@ export class CurrencyService {
         }
       })
     }); 
+  }
+
+  /**
+   * hits the API endpoint to get yesteday's currency rates
+   * @param list 
+   * @param decimalPlaces 
+   */
+  public getHistoricalRates(list) {
+    // prepare params
+    let params = {};
+    params["access_key"] = this.apiKey;
+    let currList = "";
+
+    // fire request to fixer api
+    let historicalRates: IRate[] = [];
+
+    // check whether base currency exists in the list of currencies for which rates need to be fetched
+    let baseExists = false;
+    list.forEach((curr) => {
+      if(curr.code == this.baseCurrency) {
+        baseExists = true;
+      }
+      currList += curr.code + ",";
+    });
+
+    if(!baseExists) {
+      currList += this.baseCurrency + ",";
+    }
+
+    // save in params 
+    params["symbols"] = currList;
+
+    // fetch yesterday
+    const yest = moment().subtract(1, 'days').format("YYYY-MM-DD");
+
+    // fetch data if locally available
+    return this.storageService.getHistoricalCurrencyRates(this.baseCurrency, currList).then((dt) => {
+      historicalRates = dt;
+
+      console.log("Historical Rates Fetched");
+      console.log(historicalRates);
+       // already fetched
+       var alreadyFetched = [];
+       historicalRates.forEach((curr) => {
+         alreadyFetched.push(curr.code);
+       });
+
+       // to be fetched array
+       var toBeFetched = currList.split(",");
+
+       var newCurrList = [];
+       toBeFetched.forEach((code) => {
+         if(alreadyFetched.indexOf(code) == -1) {
+           newCurrList.push(code);
+         }
+       });
+
+       console.log("To be Fetched");
+       console.log(newCurrList);
+
+       if(newCurrList.length > 0) {
+         // check whether base currency is there or not
+         var baseNotExists = newCurrList.indexOf(this.baseCurrency) == -1;
+         if(baseNotExists) {
+           newCurrList.push(this.baseCurrency);
+         }
+         currList = newCurrList.join(",");
+         params["symbols"] = currList;
+
+         return this.http.get(this.baseUrl + yest, {params: params}).pipe(map((resp) => {
+          let status = (resp as any).success;
+    
+          if(status) {
+            let rates = (resp as any).rates;
+            
+            let baseRate = null;
+            let localCurrencies = [];
+            for(var code in rates) {
+              historicalRates.push({code: code, value: rates[code], timestamp: new Date()});
+              if(code == this.baseCurrency) {
+                baseRate = rates[code];
+              }
+    
+              let obj = {code: code, value: rates[code]};
+              localCurrencies.push(obj);
+            }
+    
+            // store these rates locally
+            this.storageService.setHistoricalCurrencyRates(localCurrencies, this.baseCurrency, yest); // YYYY-MM-DD
+    
+            historicalRates.forEach((rate: IRate) => {
+              rate.value = parseFloat((baseRate / rate.value).toFixed(this.decimalPlaces));
+            });
+    
+          return historicalRates;
+          } else {
+            
+          }
+        }));
+       } else {
+        let baseRate = null;
+        historicalRates.forEach((rate: IRate) => {
+          if(rate.code == this.baseCurrency) {
+            baseRate = rate.value;
+          }
+        });
+
+        historicalRates.forEach((rate: IRate) => {
+          rate.value = parseFloat((baseRate / rate.value).toFixed(this.decimalPlaces));
+        });
+
+        return of(historicalRates);
+       }
+    });
+
+    
   }
 }

@@ -39,6 +39,7 @@ export class Tab1Page {
     this.storageService.getList().then((list) => {
       if(list != null || list.length != 0) {
         this.storageService.getDecimalPlaces().then((decimal) => {
+          this.decimal = decimal;
           this.renderList(list, decimal);
         });
       }
@@ -55,9 +56,10 @@ export class Tab1Page {
     });
     this.storageService.decimalPlaces.subscribe((decimal) => {
       if(decimal != null) {
+        this.decimal = decimal;
         const currenciesList = JSON.parse(JSON.stringify(this.currencies));
+
         this.renderList(currenciesList, decimal);
-        console.log(decimal);
       }
     });
 
@@ -120,6 +122,16 @@ export class Tab1Page {
 
         // disable loader
         this.loading = false;
+
+        // fetch historical rates
+        let historicalRates = this.currencyService.getHistoricalRates(list);
+        let histValue =  {};
+        console.log("Historical Rates");
+        historicalRates.then().then((resp) => {
+          resp.subscribe((rates: IRate[]) => {
+            console.log(rates);
+          });
+        });
       })
     });
   }

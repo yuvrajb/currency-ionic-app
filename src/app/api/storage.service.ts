@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
 import { identifierModuleUrl } from '@angular/compiler';
 import { IRate } from '../interfaces/irate';
+import moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -74,8 +75,8 @@ export class StorageService {
    * saves the data locally in database key
    */
   public setLatestCurrencyRates(currencies, baseCurrency, date) {
-    console.log("Currencies Received");
-    console.log(currencies);
+    var baseIsNull = false;
+
     // parse currencies once
     var currProcessedIndex = [];
     var currencyStorage = [];
@@ -104,6 +105,7 @@ export class StorageService {
 
       // if base currency obj is null then create a new one
       if(baseCurrencyObj == null) {
+        baseIsNull = true;
         db[baseCurrency] = {};
         db[baseCurrency]["" + dateKey] = [];
       }
@@ -126,32 +128,9 @@ export class StorageService {
         dateArray = [];
       }
 
-      console.log(baseCurrencyObj);
-      console.log(dateArray);
-
-      // parse through date to find the currency obj
-      // var newObjectsstorage = []; // data store for new objects that will be pused to dateArray;
-      // dateArray.forEach((obj, index) => {
-      //   var code = obj.code;
-
-      //   var currIndex = currencyStorage.indexOf(code);
-
-      //   if(currIndex == -1) {
-      //     var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
-      //     newObjectsstorage.push(currObj);
-
-      //     currProcessedIndex.push(true);
-      //   }
-      // });
-
-      // // push to dateArray
-      // if(newObjectsstorage.length != 0) {
-      //   dateArray.push(newObjectsstorage);  
-      // }
-
       // process the remaining currencies
       currProcessedIndex.forEach((processed, currIndex) => {
-        if(!processed) {
+        if(!processed && (currencies[currIndex].code != baseCurrency) || baseIsNull) {
           var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
 
           dateArray.push(currObj);
@@ -166,6 +145,11 @@ export class StorageService {
     })
   }
 
+  /**
+   * fetches the data locally stored in database key
+   * @param baseCurrency 
+   * @param currList 
+   */
   public getLatestCurrencyRates(baseCurrency, currList) {
     // storage
     let latestRates: IRate[] = [];
@@ -181,10 +165,7 @@ export class StorageService {
         var today = new Date();
         today.setUTCHours(0,0,0,0);
         var time = today.getTime();
-        
-        console.log(time);
-        console.log(baseCurrencyObj);
-
+      
         // now fetch the data via time
         if(baseCurrencyObj[time] != undefined || baseCurrencyObj[time] != null) {
           var currencies = baseCurrencyObj[time];
@@ -197,7 +178,7 @@ export class StorageService {
   
               // data will be stale if it's more than an hour ago
               if(toBeFetched.indexOf(curr.code) != -1 && now - lastChecked <= 3600000) {
-                var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date(), historicalValue: null};
+                var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date()};
                 latestRates.push(currObj);
               } else {
                 currencies[index] = null;
@@ -212,6 +193,113 @@ export class StorageService {
 
       // finally send the list of currency rates fetched from storage
       return latestRates;
+    });
+  }
+
+  /**
+   * stores the historical values for the currency list
+   * @param currencies 
+   * @param baseCurrency 
+   * @param date 
+   */
+  public setHistoricalCurrencyRates(currencies, baseCurrency, date) {
+    var baseIsNull = false;
+
+    // parse currencies once
+    var currProcessedIndex = [];
+    var currencyStorage = [];
+    currencies.forEach((curr) => {
+      currencyStorage.push(curr.code);
+      currProcessedIndex.push(false);
+    });
+
+    // first fetch the database object
+    this.storage.get('history').then((db) => {
+      if(db == null) {
+        db = {};
+      }
+
+      // parse through keys and try to find out the key with base Currency
+      var baseCurrencyObj = null;
+      var dateArray = null;
+
+      for(var key in db) {
+        if(key == baseCurrency) {
+          baseCurrencyObj = db[key];
+        }
+      }
+
+      var dateKey = ((new Date(date)).getTime()); 
+
+      // if base currency obj is null then create a new one
+      if(baseCurrencyObj == null) {
+        baseIsNull = true;
+        db[baseCurrency] = {};
+        db[baseCurrency]["" + dateKey] = [];
+      }
+
+      // parse to delete any older data 
+      for(var key in db[baseCurrency]) {
+        if(key == "" + dateKey) {
+          dateArray = db[baseCurrency][key];
+        } else {
+          var diff = dateKey - parseInt(key);
+          if(diff > 172800000) { // difference is more than 2 days
+            delete db[baseCurrency][key];
+          }
+        }
+      }
+
+      // process the remaining currencies
+      currProcessedIndex.forEach((processed, currIndex) => {
+        if(!processed && (currencies[currIndex].code != baseCurrency || baseIsNull)) {
+          var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
+
+          dateArray.push(currObj);
+        }
+      })
+
+      // update the collection 
+      db[baseCurrency]["" + dateKey] = dateArray;
+
+      // finally save the object
+      this.storage.set('history', db);
+    });
+  }
+
+  /**
+   * fetches historical data stored locally
+   * @param baseCurrency 
+   * @param currList 
+   */
+  public getHistoricalCurrencyRates(baseCurrency, currList) {
+    // storage
+    let historicalRates: IRate[] = [];
+
+    // split the currList and store in array
+    var toBeFetched = currList.split(",");
+
+    // fetch database object
+    return this.storage.get('history').then((db) => {
+      // now fetch the data with the key
+      if(db != null && (db[baseCurrency] != undefined || db[baseCurrency] != null)) {
+        var baseCurrencyObj = db[baseCurrency];
+        const time = new Date(moment().subtract(1, 'days').format("YYYY-MM-DD")).getTime();
+      
+        // now fetch the data via time
+        if(baseCurrencyObj[time] != undefined || baseCurrencyObj[time] != null) {
+          var currencies = baseCurrencyObj[time];
+
+          // parse through each and try to find rates
+          currencies.forEach((curr, index) => {
+            var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date()};
+            historicalRates.push(currObj);
+          })
+        }     
+      }
+
+      // finally send the list of currency rates fetched from storage
+      return historicalRates;
     });
   }
 }
