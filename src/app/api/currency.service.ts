@@ -225,7 +225,7 @@ export class CurrencyService {
 
        var newCurrList = [];
        toBeFetched.forEach((code) => {
-         if(alreadyFetched.indexOf(code) == -1) {
+         if(alreadyFetched.indexOf(code) == -1 && code.trim().length != 0) {
            newCurrList.push(code);
          }
        });
@@ -267,7 +267,7 @@ export class CurrencyService {
               rate.value = parseFloat((baseRate / rate.value).toFixed(this.decimalPlaces));
             });
     
-          return historicalRates;
+            return historicalRates;
           } else {
             
           }
