@@ -145,7 +145,7 @@ export class CurrencyService {
               }
     
               // store these rates locally
-              this.storageService.setLatestCurrencyRates(localCurrencies, baseCurrency, (resp as any).date); // YYYY-MM-DD
+              this.storageService.setCurrencyRates(localCurrencies, baseCurrency, (resp as any).date, "latest"); // YYYY-MM-DD
     
               latestRates.forEach((rate: IRate) => {
                 rate.value = parseFloat((baseRate / rate.value).toFixed(decimalPlaces));
@@ -213,6 +213,7 @@ export class CurrencyService {
 
       console.log("Historical Rates Fetched");
       console.log(historicalRates);
+
        // already fetched
        var alreadyFetched = [];
        historicalRates.forEach((curr) => {
@@ -260,7 +261,7 @@ export class CurrencyService {
             }
     
             // store these rates locally
-            this.storageService.setHistoricalCurrencyRates(localCurrencies, this.baseCurrency, yest); // YYYY-MM-DD
+            this.storageService.setCurrencyRates(localCurrencies, this.baseCurrency, yest, "historical"); // YYYY-MM-DD
     
             historicalRates.forEach((rate: IRate) => {
               rate.value = parseFloat((baseRate / rate.value).toFixed(this.decimalPlaces));

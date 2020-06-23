@@ -74,76 +74,76 @@ export class StorageService {
   /**
    * saves the data locally in database key
    */
-  public setLatestCurrencyRates(currencies, baseCurrency, date) {
-    var baseIsNull = false;
+  // public setLatestCurrencyRates(currencies, baseCurrency, date) {
+  //   var baseIsNull = false;
 
-    // parse currencies once
-    var currProcessedIndex = [];
-    var currencyStorage = [];
-    currencies.forEach((curr) => {
-      currencyStorage.push(curr.code);
-      currProcessedIndex.push(false);
-    });
+  //   // parse currencies once
+  //   var currProcessedIndex = [];
+  //   var currencyStorage = [];
+  //   currencies.forEach((curr) => {
+  //     currencyStorage.push(curr.code);
+  //     currProcessedIndex.push(false);
+  //   });
 
-    // first fetch the date
-    this.storage.get('database').then((db) => {
-      if(db == null) {
-        db = {};
-      }
+  //   // first fetch the date
+  //   this.storage.get('database').then((db) => {
+  //     if(db == null) {
+  //       db = {};
+  //     }
 
-      // parse through keys and try to find out the key with base Currency
-      var baseCurrencyObj = null;
-      var dateArray = null;
+  //     // parse through keys and try to find out the key with base Currency
+  //     var baseCurrencyObj = null;
+  //     var dateArray = null;
 
-      for(var key in db) {
-        if(key == baseCurrency) {
-          baseCurrencyObj = db[key];
-        }
-      }
+  //     for(var key in db) {
+  //       if(key == baseCurrency) {
+  //         baseCurrencyObj = db[key];
+  //       }
+  //     }
 
-      var dateKey = ((new Date(date)).getTime()); 
+  //     var dateKey = ((new Date(date)).getTime()); 
 
-      // if base currency obj is null then create a new one
-      if(baseCurrencyObj == null) {
-        baseIsNull = true;
-        db[baseCurrency] = {};
-        db[baseCurrency]["" + dateKey] = [];
-      }
+  //     // if base currency obj is null then create a new one
+  //     if(baseCurrencyObj == null) {
+  //       baseIsNull = true;
+  //       db[baseCurrency] = {};
+  //       db[baseCurrency]["" + dateKey] = [];
+  //     }
       
-      // find the key with today's date timestamp
-      for(var key in db[baseCurrency]) {
-        if(key == "" + dateKey) {
-          dateArray = db[baseCurrency][key];
-        } else {
-          var diff = dateKey - parseInt(key);
-          console.log(diff);
-          if(diff > 86400000) { // difference is more than a day
-            delete db[baseCurrency][key];
-          }
-        }
-      }
+  //     // find the key with today's date timestamp
+  //     for(var key in db[baseCurrency]) {
+  //       if(key == "" + dateKey) {
+  //         dateArray = db[baseCurrency][key];
+  //       } else {
+  //         var diff = dateKey - parseInt(key);
+  //         console.log(diff);
+  //         if(diff > 86400000) { // difference is more than a day
+  //           delete db[baseCurrency][key];
+  //         }
+  //       }
+  //     }
 
-      // if date timestamp key is not found then create a new array
-      if(dateArray == null) {
-        dateArray = [];
-      }
+  //     // if date timestamp key is not found then create a new array
+  //     if(dateArray == null) {
+  //       dateArray = [];
+  //     }
 
-      // process the remaining currencies
-      currProcessedIndex.forEach((processed, currIndex) => {
-        if(!processed && (currencies[currIndex].code != baseCurrency) || baseIsNull) {
-          var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
+  //     // process the remaining currencies
+  //     currProcessedIndex.forEach((processed, currIndex) => {
+  //       if(!processed && (currencies[currIndex].code != baseCurrency) || baseIsNull) {
+  //         var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
 
-          dateArray.push(currObj);
-        }
-      })
+  //         dateArray.push(currObj);
+  //       }
+  //     })
 
-      // update the collection
-      db[baseCurrency]["" + dateKey] = dateArray;
+  //     // update the collection
+  //     db[baseCurrency]["" + dateKey] = dateArray;
       
-      // finally save the objecet
-      this.storage.set('database', db);
-    })
-  }
+  //     // finally save the objecet
+  //     this.storage.set('database', db);
+  //   })
+  // }
 
   /**
    * fetches the data locally stored in database key
@@ -202,70 +202,70 @@ export class StorageService {
    * @param baseCurrency 
    * @param date 
    */
-  public setHistoricalCurrencyRates(currencies, baseCurrency, date) {
-    var baseIsNull = false;
+  // public setHistoricalCurrencyRates(currencies, baseCurrency, date) {
+  //   var baseIsNull = false;
 
-    // parse currencies once
-    var currProcessedIndex = [];
-    var currencyStorage = [];
-    currencies.forEach((curr) => {
-      currencyStorage.push(curr.code);
-      currProcessedIndex.push(false);
-    });
+  //   // parse currencies once
+  //   var currProcessedIndex = [];
+  //   var currencyStorage = [];
+  //   currencies.forEach((curr) => {
+  //     currencyStorage.push(curr.code);
+  //     currProcessedIndex.push(false);
+  //   });
 
-    // first fetch the database object
-    this.storage.get('history').then((db) => {
-      if(db == null) {
-        db = {};
-      }
+  //   // first fetch the database object
+  //   this.storage.get('history').then((db) => {
+  //     if(db == null) {
+  //       db = {};
+  //     }
 
-      // parse through keys and try to find out the key with base Currency
-      var baseCurrencyObj = null;
-      var dateArray = null;
+  //     // parse through keys and try to find out the key with base Currency
+  //     var baseCurrencyObj = null;
+  //     var dateArray = null;
 
-      for(var key in db) {
-        if(key == baseCurrency) {
-          baseCurrencyObj = db[key];
-        }
-      }
+  //     for(var key in db) {
+  //       if(key == baseCurrency) {
+  //         baseCurrencyObj = db[key];
+  //       }
+  //     }
 
-      var dateKey = ((new Date(date)).getTime()); 
+  //     var dateKey = ((new Date(date)).getTime()); 
 
-      // if base currency obj is null then create a new one
-      if(baseCurrencyObj == null) {
-        baseIsNull = true;
-        db[baseCurrency] = {};
-        db[baseCurrency]["" + dateKey] = [];
-      }
+  //     // if base currency obj is null then create a new one
+  //     if(baseCurrencyObj == null) {
+  //       baseIsNull = true;
+  //       db[baseCurrency] = {};
+  //       db[baseCurrency]["" + dateKey] = [];
+  //     }
 
-      // parse to delete any older data 
-      for(var key in db[baseCurrency]) {
-        if(key == "" + dateKey) {
-          dateArray = db[baseCurrency][key];
-        } else {
-          var diff = dateKey - parseInt(key);
-          if(diff > 172800000) { // difference is more than 2 days
-            delete db[baseCurrency][key];
-          }
-        }
-      }
+  //     // parse to delete any older data 
+  //     for(var key in db[baseCurrency]) {
+  //       if(key == "" + dateKey) {
+  //         dateArray = db[baseCurrency][key];
+  //       } else {
+  //         var diff = dateKey - parseInt(key);
+  //         if(diff > 172800000) { // difference is more than 2 days
+  //           delete db[baseCurrency][key];
+  //         }
+  //       }
+  //     }
 
-      // process the remaining currencies
-      currProcessedIndex.forEach((processed, currIndex) => {
-        if(!processed && (currencies[currIndex].code != baseCurrency || baseIsNull)) {
-          var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
+  //     // process the remaining currencies
+  //     currProcessedIndex.forEach((processed, currIndex) => {
+  //       if(!processed && (currencies[currIndex].code != baseCurrency || baseIsNull)) {
+  //         var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
 
-          dateArray.push(currObj);
-        }
-      })
+  //         dateArray.push(currObj);
+  //       }
+  //     })
 
-      // update the collection 
-      db[baseCurrency]["" + dateKey] = dateArray;
+  //     // update the collection 
+  //     db[baseCurrency]["" + dateKey] = dateArray;
 
-      // finally save the object
-      this.storage.set('history', db);
-    });
-  }
+  //     // finally save the object
+  //     this.storage.set('history', db);
+  //   });
+  // }
 
   /**
    * fetches historical data stored locally
@@ -300,6 +300,87 @@ export class StorageService {
 
       // finally send the list of currency rates fetched from storage
       return historicalRates;
+    });
+  }
+
+
+  /**
+   * refactored function in lieu of setLatestCurrencyRates & setHistoricalCurrencyRates
+   * @param currencies 
+   * @param baseCurrency 
+   * @param date 
+   * @param type 
+   */
+  public setCurrencyRates(currencies, baseCurrency, date, type) {
+    var baseIsNull = false;
+    var dataStore = type == "latest" ? "database" : "history";
+
+    // parse currencies once
+    var currProcessedIndex = [];
+    var currencyStorage = [];
+    currencies.forEach((curr) => {
+      currencyStorage.push(curr.code);
+      currProcessedIndex.push(false);
+    });
+
+    // first fetch the date
+    this.storage.get(dataStore).then((db) => {
+      if(db == null) {
+        db = {};
+      }
+
+      // parse through keys and try to find out the key with base Currency
+      var baseCurrencyObj = null;
+      var dateArray = null;
+
+      for(var key in db) {
+        if(key == baseCurrency) {
+          baseCurrencyObj = db[key];
+        }
+      }
+
+      var dateKey = ((new Date(date)).getTime()); 
+
+      // if base currency obj is null then create a new one
+      if(baseCurrencyObj == null) {
+        baseIsNull = true;
+        db[baseCurrency] = {};
+        db[baseCurrency]["" + dateKey] = [];
+      }
+      
+      // find the key with today's date timestamp
+      for(var key in db[baseCurrency]) {
+        if(key == "" + dateKey) {
+          dateArray = db[baseCurrency][key];
+        } else {
+          var diff = dateKey - parseInt(key);
+          console.log(diff);
+          var timeThreshold = type == "latest" ? 86400000 : (86400000 * 2);
+          if(diff > timeThreshold) { // delete if diff is more than threshold
+            delete db[baseCurrency][key];
+          }
+        }
+      }
+
+      // if date timestamp key is not found then create a new array
+      if(dateArray == null) {
+        dateArray = [];
+      }
+
+      // process the remaining currencies
+      currProcessedIndex.forEach((processed, currIndex) => {
+        if(!processed && (currencies[currIndex].code != baseCurrency) || baseIsNull) {
+          var currObj = {code: currencies[currIndex].code, rate: currencies[currIndex].value, lastChecked: new Date().getTime()};
+
+          dateArray.push(currObj);
+        }
+      })
+
+      // update the collection
+      db[baseCurrency]["" + dateKey] = dateArray;
+      
+      // finally save the objecet
+      this.storage.set(dataStore, db);
     });
   }
 }
