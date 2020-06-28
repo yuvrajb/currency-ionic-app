@@ -107,11 +107,23 @@ export class StorageService {
                 var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date()};
                 latestRates.push(currObj);
               } else {
-                currencies[index] = null;
+                // delete the older data
+                delete currencies[index];
               }
+            } else { // delete the older data
+              delete currencies[index];
             }
-          })
-        }     
+          });
+        } else { // delete the older data
+          delete baseCurrencyObj[time];
+        }  
+
+        // delete other time entries
+        for(var timeKey in db[baseCurrency]) {
+          if(timeKey != "" + time) {
+            delete db[baseCurrency][timeKey];
+          }
+        }
         
         // save the updated db
         this.storage.set('database', db);
