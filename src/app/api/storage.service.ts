@@ -167,7 +167,7 @@ export class StorageService {
    * @param type 
    */
   public setCurrencyRates(currencies, baseCurrency, date, type) {
-    var baseIsNull = false;
+    var baseIsNull = true;
     var dataStore = type == "latest" ? "database" : "history";
 
     // parse currencies once
@@ -198,7 +198,6 @@ export class StorageService {
 
       // if base currency obj is null then create a new one
       if(baseCurrencyObj == null) {
-        baseIsNull = true;
         db[baseCurrency] = {};
         db[baseCurrency]["" + dateKey] = [];
       }
@@ -221,6 +220,15 @@ export class StorageService {
       if(dateArray == null) {
         dateArray = [];
       }
+
+      // check whether base currency is there
+      console.log("scanning dateArray");
+      console.log(dateArray);
+      dateArray.forEach((curr, index) => {
+        if(curr != null && curr.code == baseCurrency) {
+          baseIsNull = false;
+        }
+      });
 
       // process the remaining currencies
       currProcessedIndex.forEach((processed, currIndex) => {
