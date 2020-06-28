@@ -118,6 +118,9 @@ export class StorageService {
           delete baseCurrencyObj[time];
         }  
 
+        // filter out empty values
+        baseCurrencyObj[time] = baseCurrencyObj[time].filter((obj) => obj != null ? true : false);
+
         // delete other time entries
         for(var timeKey in db[baseCurrency]) {
           if(timeKey != "" + time) {
