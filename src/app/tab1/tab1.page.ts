@@ -129,7 +129,26 @@ export class Tab1Page {
         console.log("Historical Rates");
         historicalRates.then().then((resp) => {
           resp.subscribe((rates: IRate[]) => {
-            console.log(rates);
+            // refresh the list with the historical rates
+            this.currencies = [];
+
+            list.forEach((curr) => {
+              const hist = rates.filter((hist_curr) => hist_curr.code == curr.code)[0];
+              if(curr.base_value > hist.value) {
+                curr.trend = "fa fa-chevron-circle-up";
+                curr.trend_class = "trend-up";
+              } else if (curr.base_value <= hist.value) {
+                curr.trend = "fa fa-chevron-circle-down";
+                curr.trend_class = "trend-down";
+              } else {
+                curr.trend = "";
+                curr.trend_class = "";
+              }
+
+              curr.diff = (curr.base_value - hist.value).toFixed(2);
+            });
+
+            this.currencies = list;
           });
         });
       })

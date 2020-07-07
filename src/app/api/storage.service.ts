@@ -114,12 +114,12 @@ export class StorageService {
               delete currencies[index];
             }
           });
+
+          // filter out empty values
+          baseCurrencyObj[time] = baseCurrencyObj[time].filter((obj) => obj != null ? true : false);
         } else { // delete the older data
           delete baseCurrencyObj[time];
         }  
-
-        // filter out empty values
-        baseCurrencyObj[time] = baseCurrencyObj[time].filter((obj) => obj != null ? true : false);
 
         // delete other time entries
         for(var timeKey in db[baseCurrency]) {
@@ -165,8 +165,18 @@ export class StorageService {
             var currObj: IRate = {code: curr.code, value: curr.rate, timestamp: new Date()};
             historicalRates.push(currObj);
           })
-        }     
+        }   
+        
+        // remove any other historical data
+        for(var timeKey in baseCurrencyObj) {
+          if(timeKey != "" + time) {
+            delete baseCurrencyObj[timeKey];
+          }
+        }
       }
+
+      // save the refresh list in db
+      this.storage.set('history', db);
 
       // finally send the list of currency rates fetched from storage
       return historicalRates;

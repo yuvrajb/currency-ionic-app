@@ -74,3 +74,18 @@ ion-badge {
   text-align: center;
   display: none;
 }
+
+.trend-up {
+  color: #20bf6b !important;
+}
+
+.trend-down {
+  color: #d35400 !important;
+}
+
+.diff-value {
+  color:rgb(31,31,31) !important;
+  font-weight: bold;
+  margin-left: 4px;
+  font-family: Manrope;
+}
